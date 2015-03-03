@@ -1,6 +1,14 @@
 from collections import OrderedDict
+import os
+import commands
 
-wlan = "wlan0"
+getwlan_bash_str = "nmcli dev | grep wifi | cut -d' ' -f1 | head -1"
+
+s = commands.getstatusoutput(getwlan_bash_str)
+wlan = s[1]
+print wlan
+exit(0)
+
 ssid = "linkyfy"
 password = "helloworld"
 
@@ -24,3 +32,18 @@ configFile = open('example.cfg',"w")
 for key in config:
 	line = key+"="+config[key]
 	configFile.write(line+'\n')
+configFile.close()
+
+start_script = """
+nmcli radio wifi off
+rfkill unblock wifi
+hostapd $(pwd)/example.cfg -B
+echo hostapd started, now configuring masquerade..
+"""
+
+stop_script = """
+nmcli radio wifi on
+echo hostapd stopped
+"""
+
+os.system("bash -c '%s'" %start_script)

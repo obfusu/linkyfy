@@ -1,9 +1,19 @@
 Linkyfy:
 --------
 Alpha Version
-
-Author	: C Ganesh Sundar
 Date	: 03/02/2015
+
+Dependencies:
+-------------
+ *python2
+ *pygobject
+ *NetworkManager(nmcli)
+ *hostapd
+ *dnsmasq
+
+Contributors:
+-------------
+	77ganesh (C Ganesh Sundar)
 
 License:
 --------
