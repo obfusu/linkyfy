@@ -1,15 +1,18 @@
-Linkyfy:
+Linkyfy: 
 --------
-Alpha Version
-Date	: 03/02/2015
+Alpha Version 0.1
+
+A GUI tool for creating WiFi hotspots in GNU/Linux
+
+Date	: 03/03/2015
 
 Dependencies:
 -------------
- *python2
- *pygobject
- *NetworkManager(nmcli)
- *hostapd
- *dnsmasq
+* python2
+* pygobject
+* NetworkManager(nmcli)
+* hostapd
+* dnsmasq
 
 Contributors:
 -------------
