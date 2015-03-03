@@ -6,19 +6,21 @@ from gi.repository import Gtk
 
 start_script = """
 killall hostapd
-killall dnsmaq
+killall dhcpd
 nmcli radio wifi off
 rfkill unblock wifi
-hostapd $(pwd)/hostapd.conf  
-echo hostapd started, now configuring masquerade..
-#echo 1 > /proc/sys/net/ipv4/ip_forward
+"""
+
+ipforward_script = """
+iptables -t nat -F
+iptables -t nat -A POSTROUTING -j MASQUERADE
 """
 
 stop_script = """
 nmcli radio wifi on
 echo hostapd stopped
 killall hostapd
-killall dnsmasq
+killall dhcpd
 """
 
 getwlan_bash_str = "nmcli dev | grep wifi | cut -d' ' -f1 | head -1"
@@ -28,8 +30,6 @@ s = commands.getstatusoutput(getwlan_bash_str)
 wlan = s[1]
 
 def create_config():
-	t = commands.getstatusoutput(getinet_bash_str)
-	inet = t[1]
 	ssid = ssid_object.get_text()
 	key = key_object.get_text()	
 	config = OrderedDict()
@@ -53,7 +53,7 @@ def create_config():
 		line = key+"="+config[key]
 		configFile.write(line+'\n')
 	configFile.close()
-
+'''
 	dnsConfigFile = open('dnsmasq.conf',"w")
 	dnsConfigFile.write('no-resolv\n')
 	dnsConfigFile.write('no-poll\n')
@@ -62,7 +62,7 @@ def create_config():
 	dnsConfigFile.write('server=8.8.8.8\n')
 	dnsConfigFile.write('server=8.8.8.4\n')
 	dnsConfigFile.close()
-
+'''
 
 class Handler:
 	def onDeleteWindow(self, *args):
@@ -70,10 +70,15 @@ class Handler:
 	def linkyfy_start(self, button):
 		print "Linkyfy will start"
 		create_config()
+		wlan_config_cmd = "ifconfig " + wlan  + " 192.168.1.1 netmask 255.255.255.0"
 		os.system("bash -c '%s'" %start_script)
-		wlan_config_cmd = "ifconfig " + wlan  + " 192.168.43.1 netmask 255.255.255.0"
-		print wlan_config_cmd
 		os.system("bash -c '%s'" %wlan_config_cmd)
+		cmd = "hostapd $(pwd)/hostapd.conf -B"
+		os.system("bash -c '%s'" %cmd)
+		os.system("bash -c '%s'" %ipforward_script)
+		print ipforward_script
+		cmd = "dhcpd -cf $(pwd)/dhcpd.conf"
+		os.system("bash -c '%s'" %cmd)
 	def linkyfy_stop(self, button):
 		print "Linkyfy will stop"
 		os.system("bash -c '%s'" %stop_script)

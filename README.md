@@ -12,7 +12,7 @@ Dependencies:
 * pygobject
 * NetworkManager(nmcli)
 * hostapd
-* dnsmasq
+* isc-dhcp-server
 
 Contributors:
 -------------
