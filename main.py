@@ -57,7 +57,6 @@ def create_config():
 	dnsConfigFile = open('dnsmasq.conf',"w")
 	dnsConfigFile.write('no-resolv\n')
 	dnsConfigFile.write('no-poll\n')
-	dnsConfigFile.write('listen-address=192.168.43.1\n')
 	dnsConfigFile.write('interface='+wlan+'\n')
 	dnsConfigFile.write('dhcp-range=192.168.43.50,192.168.43.150,12h'+'\n')
 	dnsConfigFile.write('server=8.8.8.8\n')
@@ -94,10 +93,3 @@ key_object = builder.get_object('key_value')
 ssid_object.set_text('linkyfy')
 key_object.set_text('password')
 Gtk.main()
-
-#exit(0)
-
-exit(0)
-
-ap_ip = '192.168.43.1'
-subnet = '255.255.255.0'
