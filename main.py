@@ -8,22 +8,25 @@ start_script = """
 killall hostapd
 killall dhcpd
 nmcli radio wifi off
+nmcli nm wifi off
 rfkill unblock wifi
+sysctl net.ipv4.ip_forward=1
 """
 
-ipforward_script = """
+ipforward_script = """	
 iptables -t nat -F
 iptables -t nat -A POSTROUTING -j MASQUERADE
 """
 
 stop_script = """
 nmcli radio wifi on
-echo hostapd stopped
+nmcli nm wifi on
 killall hostapd
 killall dhcpd
+echo linkyfy: hostapd, dhcpd stopped
 """
 
-getwlan_bash_str = "nmcli dev | grep wifi | cut -d' ' -f1 | head -1"
+getwlan_bash_str = "nmcli dev | grep -E 'wifi|wireless' | cut -d' ' -f1 | head -1"
 getinet_bash_str = "nmcli dev | grep connected | cut -d' ' -f1 | head -1"
 
 s = commands.getstatusoutput(getwlan_bash_str)
@@ -70,13 +73,13 @@ class Handler:
 	def linkyfy_start(self, button):
 		print "Linkyfy will start"
 		create_config()
-		wlan_config_cmd = "ifconfig " + wlan  + " 192.168.1.1 netmask 255.255.255.0"
-		os.system("bash -c '%s'" %start_script)
-		os.system("bash -c '%s'" %wlan_config_cmd)
-		cmd = "hostapd $(pwd)/hostapd.conf -B"
+		cmd = "ifconfig " + wlan  + " 192.168.1.1 netmask 255.255.255.0"
+		cmd = start_script + '\n' + cmd
 		os.system("bash -c '%s'" %cmd)
-		os.system("bash -c '%s'" %ipforward_script)
-		print ipforward_script
+		cmd = "hostapd $(pwd)/hostapd.conf -B"
+		cmd = cmd + '\n' + ipforward_script
+		os.system("bash -c '%s'" %cmd)
+		#os.system("bash -c '%s'" %ipforward_script)
 		cmd = "dhcpd -cf $(pwd)/dhcpd.conf"
 		os.system("bash -c '%s'" %cmd)
 	def linkyfy_stop(self, button):

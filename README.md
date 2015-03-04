@@ -1,6 +1,6 @@
-Linkyfy [Incomplete]: 
+Linkyfy : 
 --------
-Alpha Version 0.1
+Experimental Alpha Version 0.1
 
 A GUI tool for creating WiFi hotspots in GNU/Linux
 
