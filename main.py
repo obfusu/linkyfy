@@ -1,3 +1,16 @@
+# Linkyfy
+# Copyright (C) 2015 C Ganesh Sundar
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+
 from collections import OrderedDict
 import os
 import commands
@@ -56,16 +69,7 @@ def create_config():
 		line = key+"="+config[key]
 		configFile.write(line+'\n')
 	configFile.close()
-'''
-	dnsConfigFile = open('dnsmasq.conf',"w")
-	dnsConfigFile.write('no-resolv\n')
-	dnsConfigFile.write('no-poll\n')
-	dnsConfigFile.write('interface='+wlan+'\n')
-	dnsConfigFile.write('dhcp-range=192.168.43.50,192.168.43.150,12h'+'\n')
-	dnsConfigFile.write('server=8.8.8.8\n')
-	dnsConfigFile.write('server=8.8.8.4\n')
-	dnsConfigFile.close()
-'''
+
 
 class Handler:
 	def onDeleteWindow(self, *args):
@@ -73,15 +77,17 @@ class Handler:
 	def linkyfy_start(self, button):
 		print "Linkyfy will start"
 		create_config()
-		cmd = "ifconfig " + wlan  + " 192.168.1.1 netmask 255.255.255.0"
+		cmd = "ifconfig " + wlan  + " 169.254.0.1 netmask 255.255.0.0"
 		cmd = start_script + '\n' + cmd
 		os.system("bash -c '%s'" %cmd)
+		
 		cmd = "hostapd $(pwd)/hostapd.conf -B"
-		cmd = cmd + '\n' + ipforward_script
+		cmd += "\niptables -A FORWARD -i " + wlan + " -j ACCEPT"
 		os.system("bash -c '%s'" %cmd)
-		#os.system("bash -c '%s'" %ipforward_script)
+		
 		cmd = "dhcpd -cf $(pwd)/dhcpd.conf"
 		os.system("bash -c '%s'" %cmd)
+
 	def linkyfy_stop(self, button):
 		print "Linkyfy will stop"
 		os.system("bash -c '%s'" %stop_script)
