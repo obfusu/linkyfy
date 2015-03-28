@@ -2,15 +2,16 @@ Linkyfy :
 --------
 Experimental Alpha Version 0.1
 
-A GUI tool for creating WiFi hotspots in GNU/Linux
+A Connectify like GUI utility for creating WiFi hotspots and sharing internet 
+connection in GNU/Linux
 
-Date	: 03/03/2015
+Date	: 28/03/2015
 
 Dependencies:
 -------------
 * python2
-* pygobject
-* NetworkManager(nmcli)
+* pygobject (GTK+ python binding)
+* NetworkManager (nmcli)
 * hostapd
 * isc-dhcp-server
 
